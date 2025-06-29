@@ -136,6 +136,13 @@
     "editor.wordWrap": "on",
     "editor.rulers": [80, 120],
 
+    // === ターミナル設定 ===
+    "terminal.integrated.fontSize": 11,
+    "terminal.integrated.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', Consolas, 'Courier New', monospace",
+    "terminal.integrated.lineHeight": 1.4,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.cursorBlinking": true,
+
     // === Git・ソース管理設定 ===
     "git.enableSmartCommit": true,
     "git.autofetch": true,
@@ -152,11 +159,6 @@
     "debug.console.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', monospace",
     "testing.automaticallyOpenPeekView": "never",
 
-    // === ターミナル設定 ===
-    "terminal.integrated.fontSize": 10,
-    "terminal.integrated.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', monospace",
-    "terminal.integrated.cursorBlinking": true,
-
     // === プロジェクト固有設定 ===
     "npm.enableScriptExplorer": true,
     "npm.runSilent": true,
@@ -164,9 +166,4 @@
     "eslint.lintTask.enable": true,
     "eslint.run": "onType",
     "mocha.enabled": true,
-
-    // === Copilot ログ・デバッグ設定 ===
-    "github.copilot.advanced.debug.showScores": false,
-    "github.copilot.advanced.debug.useElectronCache": true,
-    "github.copilot.conversation.additionalContextTokens": 8192
 }

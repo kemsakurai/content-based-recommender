@@ -1,4 +1,10 @@
-module.exports = [
+import { Document } from '../src/types';
+
+/**
+ * サンプル文書データ
+ * 推薦システムのテストと例示に使用される文書の配列
+ */
+const sampleDocuments: Document[] = [
   {
     id: '1000001',
     content: 'Why studying javascript is fun?',
@@ -36,3 +42,5 @@ module.exports = [
     content: 'Is it possible to use javascript for machine learning?',
   },
 ];
+
+export default sampleDocuments;

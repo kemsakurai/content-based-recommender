@@ -1,4 +1,10 @@
-module.exports = [
+import { Document } from '../types';
+
+/**
+ * サンプル文書タグデータ
+ * 双方向学習でのタグ付けシステムのテストに使用される文書の配列
+ */
+const sampleDocumentTags: Document[] = [
   {
     id: '1',
     content: 'Javascript',
@@ -28,3 +34,5 @@ module.exports = [
     content: 'Bitcoin',
   },
 ];
+
+export default sampleDocumentTags;
