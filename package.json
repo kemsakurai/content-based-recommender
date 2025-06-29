@@ -33,7 +33,11 @@
     "kuromoji",
     "cosine-similarity"
   ],
-  "author": "Ken Sakurai <monotalk_xyz@gmail.com>",
+  "author": "Ken Sakurai <monotalk.xyz@gmail.com>",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "contributors": [
     {
       "name": "Stanley Fok",
@@ -73,11 +77,14 @@
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
     "chai": "^4.5.0",
-    "eslint": "^9.30.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
     "mocha": "^11.7.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.5.0"
   }
 }

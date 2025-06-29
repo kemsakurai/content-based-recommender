@@ -109,9 +109,9 @@ describe('ContentBasedRecommender', () => {
       expect(ids).to.deep.equal(['1000009', '1000005', '1000003']);
     });
 
-    it('should to be able to control the minScore of similar documents', () => {
+    it('should to be able to control the minScore of similar documents', async () => {
       const recommender = new ContentBasedRecommender({ minScore: 0.4 });
-      recommender.train(sampleDocuments);
+      await recommender.train(sampleDocuments);
 
       sampleDocuments.forEach((document: Document) => {
         const similarDocuments = recommender.getSimilarDocuments(document.id);
@@ -122,9 +122,9 @@ describe('ContentBasedRecommender', () => {
       });
     });
 
-    it('should to be able to control the maximum number of similar documents', () => {
+    it('should to be able to control the maximum number of similar documents', async () => {
       const recommender = new ContentBasedRecommender({ maxSimilarDocuments: 3 });
-      recommender.train(sampleDocuments);
+      await recommender.train(sampleDocuments);
 
       sampleDocuments.forEach((document: Document) => {
         const similarDocuments = recommender.getSimilarDocuments(document.id);
@@ -134,9 +134,9 @@ describe('ContentBasedRecommender', () => {
   });
 
   describe('training multi collection result validation', () => {
-    it('should return list of similar documents of the target collection in right order', () => {
+    it('should return list of similar documents of the target collection in right order', async () => {
       const recommender = new ContentBasedRecommender();
-      recommender.trainBidirectional(sampleDocuments, sampleTargetDocuments);
+      await recommender.trainBidirectional(sampleDocuments, sampleTargetDocuments);
 
       const similarDocuments = recommender.getSimilarDocuments('1000011');
 
@@ -144,9 +144,9 @@ describe('ContentBasedRecommender', () => {
       expect(ids).to.deep.equal(['1000002', '1000004', '1000009', '1000005', '1000003', '1000006', '1000001']);
     });
 
-    it('should to be able to control how many similar documents to obtain using multiple collections', () => {
+    it('should to be able to control how many similar documents to obtain using multiple collections', async () => {
       const recommender = new ContentBasedRecommender();
-      recommender.trainBidirectional(sampleDocuments, sampleTargetDocuments);
+      await recommender.trainBidirectional(sampleDocuments, sampleTargetDocuments);
 
       let similarDocuments = recommender.getSimilarDocuments('1000011', 0, 2);
       let ids = similarDocuments.map(document => document.id);
@@ -161,9 +161,9 @@ describe('ContentBasedRecommender', () => {
       expect(ids).to.deep.equal(['1000004', '1000009', '1000005']);
     });
 
-    it('should to be able to control the minScore of similar documents', () => {
+    it('should to be able to control the minScore of similar documents', async () => {
       const recommender = new ContentBasedRecommender({ minScore: 0.4 });
-      recommender.train(sampleDocuments);
+      await recommender.train(sampleDocuments);
 
       sampleDocuments.forEach((document: Document) => {
         const similarDocuments = recommender.getSimilarDocuments(document.id);
@@ -174,9 +174,9 @@ describe('ContentBasedRecommender', () => {
       });
     });
 
-    it('should to be able to control the maximum number of similar documents', () => {
+    it('should to be able to control the maximum number of similar documents', async () => {
       const recommender = new ContentBasedRecommender({ maxSimilarDocuments: 3 });
-      recommender.train(sampleDocuments);
+      await recommender.train(sampleDocuments);
 
       sampleDocuments.forEach((document: Document) => {
         const similarDocuments = recommender.getSimilarDocuments(document.id);
@@ -186,12 +186,12 @@ describe('ContentBasedRecommender', () => {
   });
 
   describe('export and import', () => {
-    it('should to be able to give the same results with recommender created by import method', () => {
+    it('should to be able to give the same results with recommender created by import method', async () => {
       const recommender = new ContentBasedRecommender({
         maxSimilarDocuments: 3,
         minScore: 0.4,
       });
-      recommender.train(sampleDocuments);
+      await recommender.train(sampleDocuments);
 
       const exportedData = recommender.export();
 
