@@ -3,6 +3,7 @@ import Vector from 'vector-object';
 import striptags from 'striptags';
 import * as sw from 'stopword';
 import * as natural from 'natural';
+import * as kuromoji from 'kuromoji';
 import {
   Document,
   RecommenderOptions,
@@ -22,6 +23,7 @@ const defaultOptions: RecommenderOptions = {
   maxSimilarDocuments: Number.MAX_SAFE_INTEGER,
   minScore: 0,
   debug: false,
+  language: 'en',
 };
 
 /**
@@ -44,6 +46,9 @@ class ContentBasedRecommender {
 
   /** 文書間の類似度データ */
   private data: Record<string, SimilarDocument[]>;
+
+  /** 日本語形態素解析用のkuromojiトークナイザー */
+  private kuromojiTokenizer?: kuromoji.Tokenizer<kuromoji.IpadicFeatures>;
 
   /**
    * ContentBasedRecommenderのコンストラクタ
@@ -76,6 +81,11 @@ class ContentBasedRecommender {
       throw new Error('The option minScore should be a number between 0 and 1');
     }
 
+    if ((options.language !== undefined) &&
+      (!_.isString(options.language) || !['en', 'ja'].includes(options.language))) {
+      throw new Error('The option language should be either "en" or "ja"');
+    }
+
     this.options = Object.assign({}, defaultOptions, options);
   }
 
@@ -83,7 +93,7 @@ class ContentBasedRecommender {
    * 単一コレクションの文書を学習する
    * @param documents 学習対象の文書配列
    */
-  public train(documents: Document[]): void {
+  public async train(documents: Document[]): Promise<void> {
     this.validateDocuments(documents);
 
     if (this.options.debug) {
@@ -91,7 +101,7 @@ class ContentBasedRecommender {
     }
 
     // ステップ1 - 文書の前処理
-    const preprocessDocs = this._preprocessDocuments(documents, this.options);
+    const preprocessDocs = await this._preprocessDocuments(documents, this.options);
 
     // ステップ2 - 文書ベクトルの作成
     const docVectors = this._produceWordVectors(preprocessDocs, this.options);
@@ -105,7 +115,7 @@ class ContentBasedRecommender {
    * @param documents メインの文書配列
    * @param targetDocuments ターゲット文書配列
    */
-  public trainBidirectional(documents: Document[], targetDocuments: Document[]): void {
+  public async trainBidirectional(documents: Document[], targetDocuments: Document[]): Promise<void> {
     this.validateDocuments(documents);
     this.validateDocuments(targetDocuments);
 
@@ -114,8 +124,8 @@ class ContentBasedRecommender {
     }
 
     // ステップ1 - 文書の前処理
-    const preprocessDocs = this._preprocessDocuments(documents, this.options);
-    const preprocessTargetDocs = this._preprocessDocuments(targetDocuments, this.options);
+    const preprocessDocs = await this._preprocessDocuments(documents, this.options);
+    const preprocessTargetDocs = await this._preprocessDocuments(targetDocuments, this.options);
 
     // ステップ2 - 文書ベクトルの作成
     const docVectors = this._produceWordVectors(preprocessDocs, this.options);
@@ -202,19 +212,19 @@ class ContentBasedRecommender {
    * @param options 設定オプション
    * @returns 前処理済み文書配列
    */
-  private _preprocessDocuments(documents: Document[], options: RecommenderOptions): ProcessedDocument[] {
+  private async _preprocessDocuments(documents: Document[], options: RecommenderOptions): Promise<ProcessedDocument[]> {
     if (options.debug) {
       console.log('Preprocessing documents');
     }
 
-    const processedDocuments = documents.map(item => {
-      const tokens = this._getTokensFromString(item.content);
+    const processedDocuments = await Promise.all(documents.map(async item => {
+      const tokens = await this._getTokensFromString(item.content);
       return {
         id: item.id,
         tokens,
         originalDocument: item,
       };
-    });
+    }));
 
     return processedDocuments;
   }
@@ -222,9 +232,22 @@ class ContentBasedRecommender {
   /**
    * 文字列からトークンを抽出する
    * @param string 対象文字列
+   * @returns トークン配列またはPromise<トークン配列>
+   */
+  private async _getTokensFromString(string: string): Promise<string[]> {
+    if (this.options.language === 'ja') {
+      return this._getJapaneseTokens(string);
+    }
+
+    return this._getEnglishTokens(string);
+  }
+
+  /**
+   * 英語テキストからトークンを取得する（既存のロジック）
+   * @param string 英語テキスト
    * @returns トークン配列
    */
-  private _getTokensFromString(string: string): string[] {
+  private _getEnglishTokens(string: string): string[] {
     // HTMLタグの除去と小文字化
     const tmpString = striptags(string, [], ' ')
       .toLowerCase();
@@ -422,6 +445,65 @@ class ContentBasedRecommender {
           data[id] = data[id].slice(0, options.maxSimilarDocuments);
         }
       });
+  }
+
+  /**
+   * 日本語形態素解析用トークナイザーを初期化する
+   * @returns Promise<void>
+   */
+  private async _initializeKuromojiTokenizer(): Promise<void> {
+    if (this.kuromojiTokenizer) {
+      return; // 既に初期化済みの場合は何もしない
+    }
+
+    return new Promise((resolve, reject) => {
+      kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenizer) => {
+        if (err) {
+          reject(err);
+        } else {
+          this.kuromojiTokenizer = tokenizer;
+          resolve();
+        }
+      });
+    });
+  }
+
+  /**
+   * 日本語テキストから形態素解析によりトークンを取得する
+   * @param text 日本語テキスト
+   * @returns トークン配列
+   */
+  private async _getJapaneseTokens(text: string): Promise<string[]> {
+    if (!this.kuromojiTokenizer) {
+      await this._initializeKuromojiTokenizer();
+    }
+
+    if (!this.kuromojiTokenizer) {
+      throw new Error('Failed to initialize kuromoji tokenizer');
+    }
+
+    // HTMLタグの除去
+    const cleanText = striptags(text, [], ' ');
+
+    // 形態素解析を実行
+    const tokens = this.kuromojiTokenizer.tokenize(cleanText);
+
+    // 名詞、動詞、形容詞のみを抽出し、ひらがな一文字は除外
+    const filteredTokens = tokens
+      .filter(token => {
+        const pos = token.pos;
+        return ['名詞', '動詞', '形容詞'].includes(pos) &&
+               (token.basic_form?.length || 0) > 1 &&
+               !/^[ひらがな]$/.test(token.basic_form || token.surface_form);
+      })
+      .map(token => {
+        // 基本形が'*'の場合は表層形を使用
+        const baseForm = token.basic_form;
+        return (baseForm && baseForm !== '*') ? baseForm : token.surface_form;
+      });
+
+    // 重複を除去
+    return [...new Set(filteredTokens)];
   }
 }
 

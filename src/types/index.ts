@@ -26,6 +26,8 @@ export interface RecommenderOptions {
   minScore?: number;
   /** デバッグモードの有効化 */
   debug?: boolean;
+  /** 使用する言語（デフォルト: 'en'、日本語: 'ja'） */
+  language?: 'en' | 'ja';
 }
 
 /**
