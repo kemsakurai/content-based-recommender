@@ -34,7 +34,7 @@ jobs:
       run: npm run tsc
 
     - name: Run linter
-      run: npm run lint || true
+      run: npm run lint
 
     - name: Build package
       run: npm run build
