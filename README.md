@@ -2,10 +2,16 @@ Content Based Recommender
 =======
 
 
-[![Node.js CI](https://github.com/stanleyfok/content-based-recommender/workflows/Node.js%20CI/badge.svg)](https://github.com/stanleyfok/content-based-recommender/actions?query=workflow%3A%22Node.js+CI%22)
+[!#### 1.6.0
+
+Migrate from JavaScript to TypeScript with full type support and enhanced development experience.
+
+#### 1.5.0
+
+Upgrade dependencies to fix security alertsde.js CI](https://github.com/stanleyfok/content-based-recommender/workflows/Node.js%20CI/badge.svg)](https://github.com/stanleyfok/content-based-recommender/actions?query=workflow%3A%22Node.js+CI%22)
 [![NPM version](https://img.shields.io/npm/v/content-based-recommender.svg)](https://www.npmjs.com/package/content-based-recommender)
 
-This is a simple content-based recommender implemented in javascript to illustrate the concept of content-based recommendation. Content-based recommender is a popular recommendation technique to show similar items to users, especially useful to websites for e-commerce, news content, etc.
+This is a simple content-based recommender implemented in TypeScript to illustrate the concept of content-based recommendation. Content-based recommender is a popular recommendation technique to show similar items to users, especially useful to websites for e-commerce, news content, etc.
 
 After the recommender is trained by an array of documents, it can tell the list of documents which are more similar to the input document.
 
@@ -56,8 +62,9 @@ Update to newer version of [vector-object](https://www.npmjs.com/package/vector-
 
 ### Single collection
 
-```js
-const ContentBasedRecommender = require('content-based-recommender')
+```ts
+import ContentBasedRecommender from 'content-based-recommender'
+
 const recommender = new ContentBasedRecommender({
   minScore: 0.1,
   maxSimilarDocuments: 100
@@ -227,7 +234,7 @@ To tell the recommender about your documents and then it will start training its
 
 ### trainBidirectional(collectionA, collectionB)
 
-Works like the normal train function, but it creates recommendations 
+Works like the normal train function, but it creates recommendations
 between two different collections instead of within one collection.
 
 ### getSimilarDocuments(id, [start], [size])
