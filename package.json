@@ -1,11 +1,11 @@
 {
-  "name": "content-based-recommender",
+  "name": "ts-content-based-recommender",
   "version": "1.6.0",
-  "description": "A simple content-based recommender implemented in TypeScript",
-  "homepage": "https://github.com/stanleyfok/content-based-recommender",
+  "description": "A TypeScript-based content-based recommender with multilingual support (Japanese & English). Forked from content-based-recommender.",
+  "homepage": "https://github.com/kensakurai/ts-content-based-recommender",
   "repository": {
     "type": "git",
-    "url": "git://github.com/stanleyfok/content-based-recommender.git"
+    "url": "git://github.com/kensakurai/ts-content-based-recommender.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,18 +23,37 @@
     "content-based",
     "filtering",
     "recommender",
-    "tdidf",
+    "tfidf",
     "machine",
-    "learning"
+    "learning",
+    "typescript",
+    "multilingual",
+    "japanese",
+    "morphological-analysis",
+    "kuromoji",
+    "cosine-similarity"
   ],
-  "author": "Stanley Fok <stanleyfok@gmail.com> (https://github.com/stanleyfok)",
+  "author": "Ken Sakurai <monotalk_xyz@gmail.com>",
   "contributors": [
+    {
+      "name": "Stanley Fok",
+      "email": "stanleyfok@gmail.com",
+      "url": "https://github.com/stanleyfok"
+    },
     {
       "url": "https://github.com/mklueh",
       "name": "Marian Klühspies"
     }
   ],
   "license": "MIT",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "bugs": {
+    "url": "https://github.com/kensakurai/ts-content-based-recommender/issues"
+  },
   "dependencies": {
     "@types/kuromoji": "^0.1.3",
     "kuromoji": "^0.1.2",

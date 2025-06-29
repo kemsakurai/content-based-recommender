@@ -1,39 +1,25 @@
-Content Based Recommender
+TypeScript Content Based Recommender
 =======
 
+[![Node.js CI](https://github.com/kensakurai/ts-content-based-recommender/workflows/Node.js%20CI/badge.svg)](https://github.com/kensakurai/ts-content-based-recommender/actions?query=workflow%3A%22Node.js+CI%22)
+[![NPM version](https://img.shields.io/npm/v/ts-content-based-recommender.svg)](https://www.npmjs.com/package/ts-content-based-recommender)
 
-[!#### 1.6.0
+This is a TypeScript-based content-based recommender with enhanced multilingual support, forked from [stanleyfok/content-based-recommender](https://github.com/stanleyfok/content-based-recommender).
 
-Migrate from JavaScript to TypeScript with full type support and enhanced development experience.
+## Credits
 
-#### 1.5.0
+This package is forked from [stanleyfok/content-based-recommender](https://github.com/stanleyfok/content-based-recommender) by Stanley Fok.
 
-Upgrade dependencies to fix security alertsde.js CI](https://github.com/stanleyfok/content-based-recommender/workflows/Node.js%20CI/badge.svg)](https://github.com/stanleyfok/content-based-recommender/actions?query=workflow%3A%22Node.js+CI%22)
-[![NPM version](https://img.shields.io/npm/v/content-based-recommender.svg)](https://www.npmjs.com/package/content-based-recommender)
+### Original Author
+- **Stanley Fok** - Original implementation and concept
 
-This is a simple content-based recommender implemented in TypeScript to illustrate the concept of content-based recommendation. Content-based recommender is a popular recommendation technique to show similar items to users, especially useful to websites for e-commerce, news content, etc.
-
-After the recommender is trained by an array of documents, it can tell the list of documents which are more similar to the input document.
-
-The training process involves 3 main steps:
-* content pre-processing, such as html tag stripping, [stopwords](http://xpo6.com/list-of-english-stop-words/) removal and [stemming](http://9ol.es/porter_js_demo.html)
-* document vectors formation using [tf-idf](https://lizrush.gitbooks.io/algorithms-for-webdevs-ebook/content/chapters/tf-idf.html)
-* find the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) scores between all document vectors
-
-Special thanks to the library [natural](https://www.npmjs.com/package/natural) helps a lot by providing a lot of NLP functionalities, such as tf-idf and word stemming.
-
-**⚠️ Note:**
-
-I haven't tested how this recommender is performing with a large dataset. I will share more results after some more testing.
-
-## Installation
-
-`npm install content-based-recommender`
-
-And then import the ContentBasedRecommender class
-```js
-const ContentBasedRecommender = require('content-based-recommender')
-```
+### Enhancements in this fork
+- **Full TypeScript support** with comprehensive type definitions
+- **Japanese language support** using kuromoji morphological analyzer
+- **Enhanced multilingual text processing** capabilities
+- **Improved testing coverage** with better error handling
+- **Updated dependencies** and modern build system with ESLint v9
+- **Performance optimizations** in similarity calculations
 
 ## What's New
 
@@ -58,12 +44,51 @@ Simplify the implementation by not using sorted set data structure to store the 
 
 Update to newer version of [vector-object](https://www.npmjs.com/package/vector-object)
 
+## Installation
+
+`npm install ts-content-based-recommender`
+
+And then import the ContentBasedRecommender class
+```js
+const ContentBasedRecommender = require('ts-content-based-recommender')
+```
+
+## Overview
+
+This is a content-based recommender implemented in TypeScript to illustrate the concept of content-based recommendation. Content-based recommender is a popular recommendation technique to show similar items to users, especially useful to websites for e-commerce, news content, etc.
+
+After the recommender is trained by an array of documents, it can tell the list of documents which are more similar to the input document.
+
+The training process involves 3 main steps:
+* content pre-processing, such as html tag stripping, [stopwords](http://xpo6.com/list-of-english-stop-words/) removal and [stemming](http://9ol.es/porter_js_demo.html)
+* document vectors formation using [tf-idf](https://lizrush.gitbooks.io/algorithms-for-webdevs-ebook/content/chapters/tf-idf.html)
+* find the [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) scores between all document vectors
+
+Special thanks to the library [natural](https://www.npmjs.com/package/natural) helps a lot by providing a lot of NLP functionalities, such as tf-idf and word stemming.
+
+**⚠️ Note:**
+
+I haven't tested how this recommender is performing with a large dataset. I will share more results after some more testing.
+
+## Language Support
+
+### English
+- Tokenization using natural.WordTokenizer
+- Porter Stemmer for word stemming
+- Stopword removal
+- N-gram support (unigram, bigram, trigram)
+
+### Japanese
+- Morphological analysis using kuromoji
+- Part-of-speech filtering (nouns, verbs, adjectives)
+- Japanese-specific text processing
+
 ## Usage
 
 ### Single collection
 
 ```ts
-import ContentBasedRecommender from 'content-based-recommender'
+import ContentBasedRecommender from 'ts-content-based-recommender'
 
 const recommender = new ContentBasedRecommender({
   minScore: 0.1,
@@ -107,7 +132,7 @@ console.log(similarDocuments);
 This example shows how to automatically match posts with related tags
 
 ```js
-const ContentBasedRecommender =  require('content-based-recommender')
+const ContentBasedRecommender = require('ts-content-based-recommender')
 
 const posts = [
                 {
@@ -209,8 +234,44 @@ Is it possible to use javascript for machine learning? related tags: [ 'machine 
 
 ```
 
+### Japanese Language Example
 
-## API
+```ts
+import ContentBasedRecommender from 'ts-content-based-recommender'
+
+const recommender = new ContentBasedRecommender({
+  language: 'ja', // 日本語サポートを有効化
+  minScore: 0.1,
+  maxSimilarDocuments: 100
+});
+
+// 日本語文書データの準備
+const japaneseDocuments = [
+  { id: '1', content: 'JavaScriptプログラミングは楽しいです。フロントエンドの開発に最適です。' },
+  { id: '2', content: 'プログラミング言語の比較検討。PythonとJavaScriptの違いについて。' },
+  { id: '3', content: '機械学習の基礎知識。データサイエンスへの応用。' },
+  { id: '4', content: 'ウェブ開発のベストプラクティス。モダンなJavaScript技術。' },
+  { id: '5', content: 'データ分析とビジュアライゼーション。統計学の活用。' }
+];
+
+// 学習開始
+await recommender.train(japaneseDocuments);
+
+// 文書IDが'1'に類似した上位5件を取得
+const similarDocuments = recommender.getSimilarDocuments('1', 0, 5);
+
+console.log(similarDocuments);
+/*
+  日本語の形態素解析により、より精密な類似度計算が可能
+  [
+    { id: '4', score: 0.45123456789 },
+    { id: '2', score: 0.32456789012 }
+  ]
+*/
+
+```
+
+### Multi collection
 
 ### constructor([options])
 
@@ -275,8 +336,20 @@ npm run test
 
 ## Authors
 
-  - [Stanley Fok](https://github.com/stanleyfok)
+### Current Maintainer
+  - [Ken Sakurai](https://github.com/kensakurai) - TypeScript migration and Japanese language support
+
+### Original Author
+  - [Stanley Fok](https://github.com/stanleyfok) - Original implementation
+
+### Contributors
+  - [Marian Klühspies](https://github.com/mklueh)
 
 ## License
 
   [MIT](./LICENSE)
+
+## Historical Changes (from upstream)
+
+This package is based on the original work by Stanley Fok.
+For historical changes before the fork, see: https://github.com/stanleyfok/content-based-recommender
