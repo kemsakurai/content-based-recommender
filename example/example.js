@@ -11,7 +11,7 @@ const recommender = new ContentBasedRecommender();
 
 recommender.trainBidirectional(posts, tags);
 
-for (let post of posts) {
+for (const post of posts) {
   const relatedTags = recommender.getSimilarDocuments(post.id);
   const tags = relatedTags.map(t => tagMap[t.id].content);
   console.log(post.content, 'related tags:', tags);

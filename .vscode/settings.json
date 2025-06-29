@@ -1,0 +1,172 @@
+{
+    // === GitHub Copilot 基本設定 ===
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+
+    // === チャット・エージェント設定 ===
+    "github.copilot.chat.agent.thinkingTool": true,
+    "github.copilot.chat.welcomeMessage": "always",
+    "github.copilot.chat.localeOverride": "ja",
+    "github.copilot.chat.enableImplicitContext": true,
+    "github.copilot.chat.followUp": "always",
+
+    // === カスタム指示・プロンプト設定 ===
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "text": "コメントは日本語で記述してください。"
+        },
+        {
+            "text": "変数名と関数名は英語でキャメルケースを使用してください。"
+        },
+        {
+            "text": "プライベートメソッドには '_' プレフィックスを使用してください。"
+        },
+        {
+            "text": "ESLint設定に従ってコードを記述してください。"
+        },
+        {
+            "text": "関数には適切なJSDocコメントを付けてください。"
+        }
+    ],
+    "github.copilot.chat.testGeneration.instructions": [
+        {
+            "text": "テストはMochaとChaiを使用して記述してください。"
+        },
+        {
+            "text": "テストコメントは日本語で記述してください。"
+        },
+        {
+            "text": "describe文とit文を適切に使い分けてください。"
+        },
+        {
+            "text": "エラーケースも含めて包括的なテストを記述してください。"
+        }
+    ],
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "text": "コミットメッセージは日本語で記述してください。"
+        },
+        {
+            "text": "最初の行は50文字以内で変更内容を要約してください。"
+        },
+        {
+            "text": "種類別プレフィックスを使用してください: feat:, fix:, docs:, style:, refactor:, test:, chore:"
+        }
+    ],
+    "github.copilot.chat.reviewSelection.instructions": [
+        {
+            "text": "コードレビューは日本語で行ってください。"
+        },
+        {
+            "text": "セキュリティ、パフォーマンス、保守性の観点から評価してください。"
+        },
+        {
+            "text": "改善提案は具体的なコード例と共に示してください。"
+        }
+    ],
+    "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+        {
+            "text": "プルリクエストの説明は日本語で記述してください。"
+        },
+        {
+            "text": "変更内容、理由、影響範囲を明確に記述してください。"
+        },
+        {
+            "text": "関連するIssueやテスト項目があれば言及してください。"
+        }
+    ],
+
+    // === エディタ補完設定 ===
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.editor.enableCodeActions": true,
+    "github.copilot.completions.enable": true,
+
+    // === 言語固有設定（日本語コメント対応） ===
+    "github.copilot.advanced": {
+        "secret_key": "github.copilot.default",
+        "length": 500,
+        "temperature": "",
+        "top_p": "",
+        "stops": {},
+        "indentationMode": {
+            "python": "space",
+            "javascript": "space",
+            "typescript": "space"
+        },
+        "inlineSuggestEnable": true,
+        "listCount": 10,
+        "debug.overrideEngine": "",
+        "debug.testOverrideProxyUrl": "",
+        "debug.filterLogCategories": []
+    },
+
+    // === MCP (Model Context Protocol) 設定 ===
+    "mcp.servers.enabled": true,
+    "mcp.auth.autoManage": true,
+    "mcp.development.enabled": true,
+
+    // === 日本語開発環境設定 ===
+    "editor.suggest.localityBonus": true,
+    "editor.suggest.showWords": false,
+    "editor.acceptSuggestionOnCommitCharacter": true,
+    "editor.acceptSuggestionOnEnter": "smart",
+    "editor.tabCompletion": "on",
+    "editor.wordBasedSuggestions": "off",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    },
+
+    // === ファイル関連設定 ===
+    "files.autoSave": "onFocusChange",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.encoding": "utf8",
+
+    // === 日本語入力・表示設定 ===
+    "editor.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', Consolas, 'Courier New', monospace",
+    "editor.fontSize": 12,
+    "editor.lineHeight": 1.6,
+    "editor.wordWrap": "on",
+    "editor.rulers": [80, 120],
+
+    // === Git・ソース管理設定 ===
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "scm.defaultViewMode": "tree",
+
+    // === コメント・ドキュメント設定 ===
+    "editor.comments.insertSpace": true,
+    "typescript.suggest.includeCompletionsForModuleExports": true,
+    "javascript.suggest.includeCompletionsForModuleExports": true,
+
+    // === デバッグ・テスト設定 ===
+    "debug.console.fontSize": 12,
+    "debug.console.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', monospace",
+    "testing.automaticallyOpenPeekView": "never",
+
+    // === ターミナル設定 ===
+    "terminal.integrated.fontSize": 10,
+    "terminal.integrated.fontFamily": "'SF Mono', 'Hiragino Kaku Gothic ProN', monospace",
+    "terminal.integrated.cursorBlinking": true,
+
+    // === プロジェクト固有設定 ===
+    "npm.enableScriptExplorer": true,
+    "npm.runSilent": true,
+    "eslint.format.enable": true,
+    "eslint.lintTask.enable": true,
+    "eslint.run": "onType",
+    "mocha.enabled": true,
+
+    // === Copilot ログ・デバッグ設定 ===
+    "github.copilot.advanced.debug.showScores": false,
+    "github.copilot.advanced.debug.useElectronCache": true,
+    "github.copilot.conversation.additionalContextTokens": 8192
+}
