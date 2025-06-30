@@ -1,0 +1,50 @@
+import { ProcessingPipeline, TokenFilterOptions, ITokenizer } from '../../types';
+import { EnglishTokenizer } from '../tokenizers/EnglishTokenizer';
+import { JapaneseTokenizer } from '../tokenizers/JapaneseTokenizer';
+import { EnglishTokenFilter } from '../filters/EnglishTokenFilter';
+import { JapaneseTokenFilter } from '../filters/JapaneseTokenFilter';
+
+/**
+ * 処理パイプラインファクトリークラス
+ * 言語に応じてトークナイザーとフィルターを作成し、統一されたパイプラインを提供します
+ */
+export class ProcessingPipelineFactory {
+  /**
+   * 言語に応じたトークナイザーを作成する
+   * @param language 対象言語
+   * @returns トークナイザーインスタンス
+   */
+  public static createTokenizer(language: 'en' | 'ja'): ITokenizer {
+    switch (language) {
+      case 'en':
+        return new EnglishTokenizer();
+      case 'ja':
+        return new JapaneseTokenizer();
+      default:
+        throw new Error(`Unsupported language: ${language}`);
+    }
+  }
+
+  /**
+   * 言語に応じた処理パイプラインを作成する
+   * @param language 対象言語 ('en' | 'ja')
+   * @param filterOptions フィルターオプション
+   * @returns 処理パイプライン
+   */
+  public static createPipeline(
+    language: 'en' | 'ja' = 'en',
+    filterOptions: TokenFilterOptions = {}
+  ): ProcessingPipeline {
+    if (language === 'ja') {
+      return {
+        tokenizer: new JapaneseTokenizer(),
+        filter: new JapaneseTokenFilter(filterOptions)
+      };
+    } else {
+      return {
+        tokenizer: new EnglishTokenizer(),
+        filter: new EnglishTokenFilter(filterOptions)
+      };
+    }
+  }
+}

@@ -12,11 +12,11 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "lint": "npx tsc --noEmit && eslint 'src/**/*.ts'",
-    "lint:fix": "eslint 'src/**/*.ts' --fix",
+    "lint": "npx tsc --noEmit && eslint 'src/**/*.ts' 'test/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
     "tsc": "tsc --noEmit",
-    "test": "./node_modules/.bin/mocha --require ts-node/register 'src/test/**/*.ts'",
-    "example": "npx ts-node src/example/example.ts",
+    "test": "./node_modules/.bin/mocha --require ts-node/register 'test/**/*.ts'",
+    "example": "npx ts-node example/example.ts",
     "dev": "npx ts-node"
   },
   "keywords": [
