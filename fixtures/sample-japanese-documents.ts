@@ -1,4 +1,4 @@
-import { Document } from '../types';
+import { Document } from '../src/types';
 
 /**
  * サンプル日本語文書データ

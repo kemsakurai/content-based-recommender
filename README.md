@@ -20,8 +20,18 @@ This package is forked from [stanleyfok/content-based-recommender](https://githu
 - **Improved testing coverage** with better error handling
 - **Updated dependencies** and modern build system with ESLint v9
 - **Performance optimizations** in similarity calculations
+- **Modular architecture** with separated tokenizers and filters
+- **Factory pattern implementation** for easy component creation
 
 ## What's New
+
+#### Latest Version
+
+* **Modular Architecture**: Separated tokenizers and filters into independent classes
+* **Factory Pattern**: Introduced `ProcessingPipelineFactory` for easy component creation
+* **Enhanced Testing**: Moved all tests to `test/` directory with improved coverage
+* **Improved Japanese Support**: Advanced morphological analysis with part-of-speech filtering
+* **Better TypeScript Support**: Comprehensive type definitions for all components
 
 #### 1.5.0
 
@@ -51,6 +61,19 @@ Update to newer version of [vector-object](https://www.npmjs.com/package/vector-
 And then import the ContentBasedRecommender class
 ```js
 const ContentBasedRecommender = require('ts-content-based-recommender')
+```
+
+For TypeScript projects:
+```ts
+import ContentBasedRecommender from 'ts-content-based-recommender'
+// or import individual components
+import {
+  ProcessingPipelineFactory,
+  EnglishTokenizer,
+  JapaneseTokenizer,
+  EnglishTokenFilter,
+  JapaneseTokenFilter
+} from 'ts-content-based-recommender'
 ```
 
 ## Overview
@@ -108,8 +131,8 @@ const documents = [
   { id: '1000009', content: 'Is it possible to use javascript for machine learning?' }
 ];
 
-// start training
-recommender.train(documents);
+// start training (now async)
+await recommender.train(documents);
 
 //get top 10 similar items to document 1000002
 const similarDocuments = recommender.getSimilarDocuments('1000002', 0, 10);
@@ -131,47 +154,47 @@ console.log(similarDocuments);
 
 This example shows how to automatically match posts with related tags
 
-```js
-const ContentBasedRecommender = require('ts-content-based-recommender')
+```ts
+import ContentBasedRecommender from 'ts-content-based-recommender'
 
 const posts = [
-                {
-                  id: '1000001',
-                  content: 'Why studying javascript is fun?',
-                },
-                {
-                  id: '1000002',
-                  content: 'The trend for javascript in machine learning',
-                },
-                {
-                  id: '1000003',
-                  content: 'The most insightful stories about JavaScript',
-                },
-                {
-                  id: '1000004',
-                  content: 'Introduction to Machine Learning',
-                },
-                {
-                  id: '1000005',
-                  content: 'Machine learning and its application',
-                },
-                {
-                  id: '1000006',
-                  content: 'Python vs Javascript, which is better?',
-                },
-                {
-                  id: '1000007',
-                  content: 'How Python saved my life?',
-                },
-                {
-                  id: '1000008',
-                  content: 'The future of Bitcoin technology',
-                },
-                {
-                  id: '1000009',
-                  content: 'Is it possible to use javascript for machine learning?',
-                },
-              ];
+  {
+    id: '1000001',
+    content: 'Why studying javascript is fun?',
+  },
+  {
+    id: '1000002',
+    content: 'The trend for javascript in machine learning',
+  },
+  {
+    id: '1000003',
+    content: 'The most insightful stories about JavaScript',
+  },
+  {
+    id: '1000004',
+    content: 'Introduction to Machine Learning',
+  },
+  {
+    id: '1000005',
+    content: 'Machine learning and its application',
+  },
+  {
+    id: '1000006',
+    content: 'Python vs Javascript, which is better?',
+  },
+  {
+    id: '1000007',
+    content: 'How Python saved my life?',
+  },
+  {
+    id: '1000008',
+    content: 'The future of Bitcoin technology',
+  },
+  {
+    id: '1000009',
+    content: 'Is it possible to use javascript for machine learning?',
+  },
+];
 
 const tags = [
                {
@@ -211,12 +234,13 @@ const tagMap = tags.reduce((acc, tag) => {
 
 const recommender = new ContentBasedRecommender();
 
-recommender.trainBidirectional(posts, tags);
+// Training is now async
+await recommender.trainBidirectional(posts, tags);
 
-for (let post of posts) {
+for (const post of posts) {
   const relatedTags = recommender.getSimilarDocuments(post.id);
-  const tags = relatedTags.map(t => tagMap[t.id].content);
-  console.log(post.content, 'related tags:', tags);
+  const tagNames = relatedTags.map(t => tagMap[t.id].content);
+  console.log(post.content, 'related tags:', tagNames);
 }
 
 
@@ -254,7 +278,7 @@ const japaneseDocuments = [
   { id: '5', content: 'データ分析とビジュアライゼーション。統計学の活用。' }
 ];
 
-// 学習開始
+// 学習開始（非同期処理）
 await recommender.train(japaneseDocuments);
 
 // 文書IDが'1'に類似した上位5件を取得
@@ -271,7 +295,88 @@ console.log(similarDocuments);
 
 ```
 
-### Multi collection
+### Using Individual Components
+
+The library now provides modular components that can be used independently:
+
+```ts
+import {
+  ProcessingPipelineFactory,
+  EnglishTokenizer,
+  JapaneseTokenizer,
+  EnglishTokenFilter,
+  JapaneseTokenFilter
+} from 'ts-content-based-recommender'
+
+// Using factory pattern to create processing pipelines
+const englishPipeline = ProcessingPipelineFactory.createPipeline('en', {
+  minTokenLength: 2,
+  removeStopwords: true,
+  customStopWords: ['custom', 'words']
+});
+
+const japanesePipeline = ProcessingPipelineFactory.createPipeline('ja', {
+  allowedPos: ['名詞', '動詞', '形容詞'],  // part-of-speech filtering
+  minTokenLength: 1
+});
+
+// Using tokenizers directly
+const englishTokenizer = ProcessingPipelineFactory.createTokenizer('en');
+const japaneseTokenizer = ProcessingPipelineFactory.createTokenizer('ja');
+
+const englishTokens = await englishTokenizer.tokenize('machine learning algorithm');
+const japaneseTokens = await japaneseTokenizer.tokenize('機械学習アルゴリズム');
+
+// Using filters directly
+const englishFilter = new EnglishTokenFilter({
+  removeDuplicates: true,
+  removeStopwords: true,
+  minTokenLength: 2
+});
+
+const japaneseFilter = new JapaneseTokenFilter({
+  allowedPos: ['名詞', '動詞'],
+  removeDuplicates: false
+});
+
+const filteredEnglishTokens = englishFilter.filter(englishTokens);
+const filteredJapaneseTokens = japaneseFilter.filter(japaneseTokens);
+```
+
+### Advanced Configuration Example
+
+```ts
+import ContentBasedRecommender from 'ts-content-based-recommender'
+
+// Example with advanced token filtering options
+const recommender = new ContentBasedRecommender({
+  language: 'ja',
+  minScore: 0.1,
+  maxSimilarDocuments: 50,
+  tokenFilterOptions: {
+    removeDuplicates: false,           // Keep duplicate tokens for frequency analysis
+    removeStopwords: true,             // Remove Japanese stopwords
+    minTokenLength: 2,                 // Exclude tokens shorter than 2 characters
+    allowedPos: ['名詞', '動詞'],       // Only extract nouns and verbs
+    customStopWords: ['です', 'ます']   // Additional custom stopwords
+  }
+});
+
+const documents = [
+  { id: '1', content: 'JavaScriptプログラミングはとても楽しいです' },
+  { id: '2', content: 'Pythonによる機械学習の勉強をします' },
+  { id: '3', content: 'ウェブ開発の最新技術トレンド' }
+];
+
+await recommender.train(documents);
+const similar = recommender.getSimilarDocuments('1');
+```
+
+## API Reference
+
+### ContentBasedRecommender
+
+The main class for content-based recommendations.
 
 ### constructor([options])
 
@@ -281,10 +386,17 @@ To create the recommender instance
 
 Supported options:
 
-* maxVectorSize - to control the max size of word vector after tf-idf processing. A smaller vector size will help training performance while not affecting recommendation quality. Defaults to be 100.
-* minScore - the minimum score required to meet to consider it is a similar document. It will save more memory by filtering out documents having low scores. Allowed values range from 0 to 1. Default is 0.
-* maxSimilarDocuments - the maximum number of similar documents to keep for each document. Default is the [max safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER) in javascript.
-* debug - show progress messages so can monitor the training progress
+* **language** - the language to use for text processing. Supported values: 'en'（English）, 'ja'（Japanese）. Default is 'en'.
+* **maxVectorSize** - to control the max size of word vector after tf-idf processing. A smaller vector size will help training performance while not affecting recommendation quality. Defaults to be 100.
+* **minScore** - the minimum score required to meet to consider it is a similar document. It will save more memory by filtering out documents having low scores. Allowed values range from 0 to 1. Default is 0.
+* **maxSimilarDocuments** - the maximum number of similar documents to keep for each document. Default is the max safe integer in javascript.
+* **debug** - show progress messages so can monitor the training progress
+* **tokenFilterOptions** - advanced filtering options for token processing:
+  * **removeDuplicates** - remove duplicate tokens（default: true）
+  * **removeStopwords** - remove stopwords（default: true）
+  * **customStopWords** - additional custom stopwords（default: empty array）
+  * **minTokenLength** - minimum token length（default: 1）
+  * **allowedPos** - for Japanese: allowed part-of-speech tags（default: 名詞、動詞、形容詞）
 
 ### train(documents)
 
@@ -292,11 +404,14 @@ To tell the recommender about your documents and then it will start training its
 
 * documents - an array of object, with fields **id** and **content**
 
+**Note**: This method is now asynchronous and returns a Promise. Use `await` or `.then()` to handle the async operation.
 
 ### trainBidirectional(collectionA, collectionB)
 
 Works like the normal train function, but it creates recommendations
 between two different collections instead of within one collection.
+
+**Note**: This method is now asynchronous and returns a Promise. Use `await` or `.then()` to handle the async operation.
 
 ### getSimilarDocuments(id, [start], [size])
 
@@ -308,12 +423,12 @@ To get an array of similar items with document id
 
 It returns an array of objects, with fields **id** and **score** (ranging from 0 to 1)
 
-### export
+### export()
 
 To export the recommender as json object.
 ```js
 const recommender = new ContentBasedRecommender();
-recommender.train(documents);
+await recommender.train(documents);
 
 const object = recommender.export();
 //can save the object to disk, database or otherwise
@@ -327,11 +442,175 @@ const recommender = new ContentBasedRecommender();
 recommender.import(object); // object can be loaded from disk, database or otherwise
 ```
 
-## Test
+### ProcessingPipelineFactory
+
+Factory class for creating processing pipelines and individual components.
+
+#### ProcessingPipelineFactory.createPipeline(language, options)
+
+Creates a complete processing pipeline with tokenizer and filter.
+
+* **language** - 'en' for English or 'ja' for Japanese
+* **options** - filter options (optional)
+
+#### ProcessingPipelineFactory.createTokenizer(language)
+
+Creates a tokenizer for the specified language.
+
+* **language** - 'en' for English or 'ja' for Japanese
+
+#### ProcessingPipelineFactory.createEnglishPipeline(options)
+
+Creates an English-specific processing pipeline.
+
+* **options** - filter options (optional)
+
+#### ProcessingPipelineFactory.createJapanesePipeline(options)
+
+Creates a Japanese-specific processing pipeline.
+
+* **options** - filter options (optional)
+
+### Tokenizers
+
+#### EnglishTokenizer
+
+Tokenizes English text with stemming and N-gram support.
+
+```ts
+const tokenizer = new EnglishTokenizer();
+const tokens = await tokenizer.tokenize('machine learning algorithm');
+```
+
+#### JapaneseTokenizer
+
+Tokenizes Japanese text using kuromoji morphological analyzer.
+
+```ts
+const tokenizer = new JapaneseTokenizer();
+const tokens = await tokenizer.tokenize('機械学習アルゴリズム');
+const detailedTokens = await tokenizer.getDetailedTokens('機械学習アルゴリズム');
+```
+
+### Filters
+
+#### EnglishTokenFilter
+
+Filters English tokens with stopword removal, N-gram support, and more.
+
+```ts
+const filter = new EnglishTokenFilter({
+  removeDuplicates: true,
+  removeStopwords: true,
+  minTokenLength: 2,
+  customStopWords: ['custom', 'words']
+});
+const filtered = filter.filter(tokens);
+const ngramFiltered = filter.filterWithNgrams(tokens);
+```
+
+#### JapaneseTokenFilter
+
+Filters Japanese tokens with part-of-speech filtering and Japanese-specific processing.
+
+```ts
+const filter = new JapaneseTokenFilter({
+  allowedPos: ['名詞', '動詞', '形容詞'],
+  removeDuplicates: true,
+  removeStopwords: true,
+  minTokenLength: 1
+});
+const filtered = filter.filter(tokens);
+const posFiltered = filter.filterWithPos(detailedTokens);
+```
+
+### Filter Options
+
+Common filter options for both English and Japanese:
+
+* **removeDuplicates** - remove duplicate tokens（default: true）
+* **removeStopwords** - remove stopwords（default: true）
+* **customStopWords** - additional custom stopwords（default: empty array）
+* **minTokenLength** - minimum token length（default: 1）
+
+Japanese-specific options:
+
+* **allowedPos** - allowed part-of-speech tags（default: 名詞、動詞、形容詞）
+
+## Development
+
+### Project Structure
+
+```
+├── src/                    # Source code
+│   ├── lib/               # Main library code
+│   │   ├── tokenizers/    # Tokenizer implementations
+│   │   │   ├── EnglishTokenizer.ts
+│   │   │   └── JapaneseTokenizer.ts
+│   │   ├── filters/       # Token filter implementations
+│   │   │   ├── EnglishTokenFilter.ts
+│   │   │   └── JapaneseTokenFilter.ts
+│   │   ├── factories/     # Factory classes
+│   │   │   └── ProcessingPipelineFactory.ts
+│   │   ├── ContentBasedRecommender.ts  # Main recommender class
+│   │   └── index.ts       # Library exports
+│   ├── types/             # TypeScript type definitions
+│   │   └── index.ts
+│   └── index.ts           # Main export file
+├── test/                  # Test files
+│   ├── tokenizers/        # Tokenizer tests
+│   ├── filters/           # Filter tests
+│   ├── factories/         # Factory tests
+│   └── *.ts              # Integration and main tests
+├── fixtures/              # Test data
+│   ├── sample-documents.ts
+│   ├── sample-document-tags.ts
+│   ├── sample-target-documents.ts
+│   └── sample-japanese-documents.ts
+├── example/               # Usage examples
+│   └── example.ts
+├── index.ts               # Package entry point
+├── tsconfig.json          # TypeScript configuration
+└── eslint.config.js       # ESLint configuration
+```
+
+### Running Tests
+
+The test suite includes comprehensive unit tests and integration tests for all components:
 
 ```bash
+# Install dependencies
 npm install
-npm run test
+
+# Run all tests
+npm test
+
+# Run specific test categories
+npm test -- --grep "EnglishTokenizer"
+npm test -- --grep "JapaneseTokenizer"
+npm test -- --grep "EnglishTokenFilter"
+npm test -- --grep "JapaneseTokenFilter"
+npm test -- --grep "ProcessingPipelineFactory"
+npm test -- --grep "ContentBasedRecommender"
+
+# Run example
+npm run example
+
+# Run development mode with ts-node
+npm run dev
+```
+
+### Building
+
+```bash
+# Build TypeScript
+npm run build
+
+# Run linting
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
 ```
 
 ## Authors

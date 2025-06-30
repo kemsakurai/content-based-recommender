@@ -4,7 +4,7 @@
     "module": "CommonJS",
     "lib": ["ES2020", "DOM"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -25,7 +25,10 @@
     "strictPropertyInitialization": false
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*",
+    "example/**/*",
+    "fixtures/**/*"
   ],
   "exclude": [
     "node_modules",

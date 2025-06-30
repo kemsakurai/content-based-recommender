@@ -1,19 +1,19 @@
 import * as _ from 'underscore';
 import Vector from 'vector-object';
-import striptags from 'striptags';
-import * as sw from 'stopword';
-import * as natural from 'natural';
-import * as kuromoji from 'kuromoji';
 import {
   Document,
   RecommenderOptions,
   SimilarDocument,
   ExportedModel,
   ProcessedDocument,
+  ProcessingPipeline,
 } from '../types';
+import { ProcessingPipelineFactory } from './factories/ProcessingPipelineFactory';
+import { JapaneseTokenizer } from './tokenizers/JapaneseTokenizer';
+import { EnglishTokenFilter } from './filters/EnglishTokenFilter';
+import { JapaneseTokenFilter } from './filters/JapaneseTokenFilter';
 
-const { TfIdf, PorterStemmer, NGrams } = natural;
-const tokenizer = new natural.WordTokenizer();
+const { TfIdf } = require('natural');
 
 /**
  * デフォルト設定オプション
@@ -24,6 +24,13 @@ const defaultOptions: RecommenderOptions = {
   minScore: 0,
   debug: false,
   language: 'en',
+  tokenFilterOptions: {
+    removeDuplicates: true,
+    removeStopwords: true,
+    customStopWords: [],
+    minTokenLength: 1,
+    allowedPos: ['名詞', '動詞', '形容詞']
+  }
 };
 
 /**
@@ -47,8 +54,8 @@ class ContentBasedRecommender {
   /** 文書間の類似度データ */
   private data: Record<string, SimilarDocument[]>;
 
-  /** 日本語形態素解析用のkuromojiトークナイザー */
-  private kuromojiTokenizer?: kuromoji.Tokenizer<kuromoji.IpadicFeatures>;
+  /** 処理パイプライン（トークナイザー + フィルター） */
+  private pipeline: ProcessingPipeline;
 
   /**
    * ContentBasedRecommenderのコンストラクタ
@@ -57,6 +64,9 @@ class ContentBasedRecommender {
   constructor(options: RecommenderOptions = {}) {
     this.setOptions(options);
     this.data = {};
+
+    // 処理パイプラインの初期化
+    this.pipeline = ProcessingPipelineFactory.createPipeline(this.options.language!, this.options.tokenFilterOptions);
   }
 
   /**
@@ -86,7 +96,13 @@ class ContentBasedRecommender {
       throw new Error('The option language should be either "en" or "ja"');
     }
 
+    const prevLanguage = this.options?.language;
     this.options = Object.assign({}, defaultOptions, options);
+
+    // 言語が変更された場合、処理パイプラインを再初期化
+    if (this.pipeline && prevLanguage !== this.options.language) {
+      this.pipeline = ProcessingPipelineFactory.createPipeline(this.options.language!, this.options.tokenFilterOptions);
+    }
   }
 
   /**
@@ -232,58 +248,44 @@ class ContentBasedRecommender {
   /**
    * 文字列からトークンを抽出する
    * @param string 対象文字列
-   * @returns トークン配列またはPromise<トークン配列>
+   * @returns トークン配列のPromise
    */
   private async _getTokensFromString(string: string): Promise<string[]> {
-    if (this.options.language === 'ja') {
-      return this._getJapaneseTokens(string);
-    }
+    // トークン化
+    const rawTokens = await this.pipeline.tokenizer.tokenize(string);
 
-    return this._getEnglishTokens(string);
+    // フィルタリング
+    if (this.options.language === 'ja') {
+      // 日本語の場合、品詞情報を含む詳細トークンを取得してフィルタリング
+      const japaneseTokenizer = this.pipeline.tokenizer as JapaneseTokenizer;
+      const japaneseFilter = this.pipeline.filter as JapaneseTokenFilter;
+      const detailedTokens = await japaneseTokenizer.getDetailedTokens(string);
+      return japaneseFilter.filterWithPos(detailedTokens);
+    } else if (this.options.language === 'en') {
+      // 英語の場合、N-gram対応フィルタリング
+      const englishFilter = this.pipeline.filter as EnglishTokenFilter;
+      return englishFilter.filterWithNgrams(rawTokens);
+    } else {
+      // その他の場合、通常のフィルタリング
+      return this.pipeline.filter.filter(rawTokens);
+    }
   }
 
   /**
-   * 英語テキストからトークンを取得する（既存のロジック）
-   * @param string 英語テキスト
-   * @returns トークン配列
+   * 類似文書を降順でソートし、最大数を制限する
+   * @param data 類似度データ
+   * @param options 設定オプション
    */
-  private _getEnglishTokens(string: string): string[] {
-    // HTMLタグの除去と小文字化
-    const tmpString = striptags(string, [], ' ')
-      .toLowerCase();
+  private orderDocuments(data: Record<string, SimilarDocument[]>, options: RecommenderOptions): void {
+    // 類似文書を降順でソート
+    Object.keys(data)
+      .forEach((id) => {
+        data[id].sort((a, b) => b.score - a.score);
 
-    // 文字列のトークン化
-    const tokens = tokenizer.tokenize(tmpString);
-
-    if (!tokens) {
-      return [];
-    }
-
-    // ユニグラムの取得
-    const unigrams = sw.removeStopwords(tokens)
-      .map(unigram => PorterStemmer.stem(unigram));
-
-    // バイグラムの取得
-    const bigrams = NGrams.bigrams(tokens)
-      .filter(bigram =>
-        // ストップワードを含むバイグラムをフィルタリング
-        (bigram.length === sw.removeStopwords(bigram).length))
-      .map(bigram =>
-        // トークンのステミング処理
-        bigram.map(token => PorterStemmer.stem(token))
-          .join('_'));
-
-    // トライグラムの取得
-    const trigrams = NGrams.trigrams(tokens)
-      .filter(trigram =>
-        // ストップワードを含むトライグラムをフィルタリング
-        (trigram.length === sw.removeStopwords(trigram).length))
-      .map(trigram =>
-        // トークンのステミング処理
-        trigram.map(token => PorterStemmer.stem(token))
-          .join('_'));
-
-    return [...unigrams, ...bigrams, ...trigrams];
+        if (data[id].length > options.maxSimilarDocuments!) {
+          data[id] = data[id].slice(0, options.maxSimilarDocuments);
+        }
+      });
   }
 
   /**
@@ -428,82 +430,6 @@ class ContentBasedRecommender {
     this.orderDocuments(data, options);
 
     return data;
-  }
-
-  /**
-   * 類似文書を降順でソートし、最大数を制限する
-   * @param data 類似度データ
-   * @param options 設定オプション
-   */
-  private orderDocuments(data: Record<string, SimilarDocument[]>, options: RecommenderOptions): void {
-    // 類似文書を降順でソート
-    Object.keys(data)
-      .forEach((id) => {
-        data[id].sort((a, b) => b.score - a.score);
-
-        if (data[id].length > options.maxSimilarDocuments!) {
-          data[id] = data[id].slice(0, options.maxSimilarDocuments);
-        }
-      });
-  }
-
-  /**
-   * 日本語形態素解析用トークナイザーを初期化する
-   * @returns Promise<void>
-   */
-  private async _initializeKuromojiTokenizer(): Promise<void> {
-    if (this.kuromojiTokenizer) {
-      return; // 既に初期化済みの場合は何もしない
-    }
-
-    return new Promise((resolve, reject) => {
-      kuromoji.builder({ dicPath: 'node_modules/kuromoji/dict' }).build((err, tokenizer) => {
-        if (err) {
-          reject(err);
-        } else {
-          this.kuromojiTokenizer = tokenizer;
-          resolve();
-        }
-      });
-    });
-  }
-
-  /**
-   * 日本語テキストから形態素解析によりトークンを取得する
-   * @param text 日本語テキスト
-   * @returns トークン配列
-   */
-  private async _getJapaneseTokens(text: string): Promise<string[]> {
-    if (!this.kuromojiTokenizer) {
-      await this._initializeKuromojiTokenizer();
-    }
-
-    if (!this.kuromojiTokenizer) {
-      throw new Error('Failed to initialize kuromoji tokenizer');
-    }
-
-    // HTMLタグの除去
-    const cleanText = striptags(text, [], ' ');
-
-    // 形態素解析を実行
-    const tokens = this.kuromojiTokenizer.tokenize(cleanText);
-
-    // 名詞、動詞、形容詞のみを抽出し、ひらがな一文字は除外
-    const filteredTokens = tokens
-      .filter(token => {
-        const pos = token.pos;
-        return ['名詞', '動詞', '形容詞'].includes(pos) &&
-               (token.basic_form?.length || 0) > 1 &&
-               !/^[ひらがな]$/.test(token.basic_form || token.surface_form);
-      })
-      .map(token => {
-        // 基本形が'*'の場合は表層形を使用
-        const baseForm = token.basic_form;
-        return (baseForm && baseForm !== '*') ? baseForm : token.surface_form;
-      });
-
-    // 重複を除去
-    return [...new Set(filteredTokens)];
   }
 }
 
