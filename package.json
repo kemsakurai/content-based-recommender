@@ -1,14 +1,24 @@
 {
   "name": "ts-content-based-recommender",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "A TypeScript-based content-based recommender with multilingual support (Japanese & English). Forked from content-based-recommender.",
+  "type": "commonjs",
   "homepage": "https://github.com/kensakurai/ts-content-based-recommender",
   "repository": {
     "type": "git",
     "url": "git://github.com/kensakurai/ts-content-based-recommender.git"
   },
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",

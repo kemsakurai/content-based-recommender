@@ -25,14 +25,15 @@
     "strictPropertyInitialization": false
   },
   "include": [
-    "src/**/*",
-    "test/**/*",
-    "example/**/*",
-    "fixtures/**/*"
+    "index.ts",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "test/**/*",
+    "example/**/*",
+    "fixtures/**/*",
     "**/*.test.ts",
     "**/*.spec.ts"
   ]
