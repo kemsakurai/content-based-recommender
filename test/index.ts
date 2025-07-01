@@ -2,15 +2,15 @@
 // Mochaが自動的に実行するためのエントリポイント
 
 // 個別コンポーネントのテスト
-import './tokenizers/EnglishTokenizer';
-import './tokenizers/JapaneseTokenizer';
-import './filters/EnglishTokenFilter';
-import './filters/JapaneseTokenFilter';
-import './factories/ProcessingPipelineFactory';
+import './tokenizers/EnglishTokenizer.js';
+import './tokenizers/JapaneseTokenizer.js';
+import './filters/EnglishTokenFilter.js';
+import './filters/JapaneseTokenFilter.js';
+import './factories/ProcessingPipelineFactory.js';
 
 // 統合テスト
-import './ContentBasedRecommenderImproved';
-import './pipeline-integration-test';
+import './ContentBasedRecommenderImproved.js';
+import './pipeline-integration-test.js';
 
 // 既存のテスト（後方互換性）
-import './ContentBasedRecommender';
+import './ContentBasedRecommender.js';

@@ -1,8 +1,8 @@
-import { ProcessingPipeline, TokenFilterOptions, ITokenizer } from '../../types';
-import { EnglishTokenizer } from '../tokenizers/EnglishTokenizer';
-import { JapaneseTokenizer } from '../tokenizers/JapaneseTokenizer';
-import { EnglishTokenFilter } from '../filters/EnglishTokenFilter';
-import { JapaneseTokenFilter } from '../filters/JapaneseTokenFilter';
+import { ProcessingPipeline, TokenFilterOptions, ITokenizer } from '../../types/index.js';
+import { EnglishTokenizer } from '../tokenizers/EnglishTokenizer.js';
+import { JapaneseTokenizer } from '../tokenizers/JapaneseTokenizer.js';
+import { EnglishTokenFilter } from '../filters/EnglishTokenFilter.js';
+import { JapaneseTokenFilter } from '../filters/JapaneseTokenFilter.js';
 
 /**
  * 処理パイプラインファクトリークラス

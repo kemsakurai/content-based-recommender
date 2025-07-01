@@ -1,9 +1,9 @@
-import * as natural from 'natural';
+import natural from 'natural';
 import striptags from 'striptags';
-import { ITokenizer } from '../../types';
+import { ITokenizer } from '../../types/index.js';
 
-const { PorterStemmer, NGrams } = natural;
-const tokenizer = new natural.WordTokenizer();
+const { PorterStemmer, NGrams, WordTokenizer } = natural;
+const tokenizer = new WordTokenizer();
 
 /**
  * 英語テキスト用のトークナイザークラス

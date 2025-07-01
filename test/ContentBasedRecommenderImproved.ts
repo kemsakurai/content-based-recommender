@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import ContentBasedRecommender from '../src/lib/ContentBasedRecommender';
-import { Document, TokenFilterOptions } from '../src/types';
+import ContentBasedRecommender from '../src/lib/ContentBasedRecommender.js';
+import { Document, TokenFilterOptions } from '../src/types/index.js';
 
 describe('ContentBasedRecommender - 改良版', () => {
   let recommender: ContentBasedRecommender;

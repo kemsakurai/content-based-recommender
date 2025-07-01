@@ -1,0 +1,8 @@
+{
+  "loader": "ts-node/esm",
+  "spec": "test/**/*.ts",
+  "timeout": 10000,
+  "recursive": true,
+  "extensions": ["ts"],
+  "require": ["ts-node/register"]
+}

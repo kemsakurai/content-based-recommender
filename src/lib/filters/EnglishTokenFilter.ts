@@ -1,5 +1,5 @@
 import * as sw from 'stopword';
-import { IEnglishTokenFilter, TokenFilterOptions } from '../../types';
+import { IEnglishTokenFilter, TokenFilterOptions } from '../../types/index.js';
 
 /**
  * 英語専用トークンフィルタークラス

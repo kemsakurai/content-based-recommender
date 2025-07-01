@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { EnglishTokenFilter } from '../../src/lib/filters/EnglishTokenFilter';
+import { EnglishTokenFilter } from '../../src/lib/filters/EnglishTokenFilter.js';
 
 describe('EnglishTokenFilter', () => {
   let filter: EnglishTokenFilter;

@@ -1,7 +1,7 @@
-import ContentBasedRecommender from '../src/lib/ContentBasedRecommender';
-import { Document } from '../src/types';
-import posts from '../fixtures/sample-documents';
-import tags from '../fixtures/sample-document-tags';
+import ContentBasedRecommender from '../src/lib/ContentBasedRecommender.js';
+import { Document } from '../src/types/index.js';
+import posts from '../fixtures/sample-documents.js';
+import tags from '../fixtures/sample-document-tags.js';
 
 /**
  * Content-Based Recommenderの使用例

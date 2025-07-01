@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import ContentBasedRecommender from '../src/lib/ContentBasedRecommender';
+import ContentBasedRecommender from '../src/lib/ContentBasedRecommender.js';
 
 describe('Pipeline Integration Tests', () => {
   describe('ContentBasedRecommender Integration Tests', () => {

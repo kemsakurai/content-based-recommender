@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import ContentBasedRecommender from '../src/lib/ContentBasedRecommender';
-import { Document } from '../src/types';
-import sampleDocuments from '../fixtures/sample-documents';
-import sampleTargetDocuments from '../fixtures/sample-target-documents';
-import sampleJapaneseDocuments from '../fixtures/sample-japanese-documents';
+import ContentBasedRecommender from '../src/lib/ContentBasedRecommender.js';
+import { Document } from '../src/types/index.js';
+import sampleDocuments from '../fixtures/sample-documents.js';
+import sampleTargetDocuments from '../fixtures/sample-target-documents.js';
+import sampleJapaneseDocuments from '../fixtures/sample-japanese-documents.js';
 
 /**
  * ContentBasedRecommenderのテストスイート

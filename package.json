@@ -2,7 +2,7 @@
   "name": "ts-content-based-recommender",
   "version": "1.6.2",
   "description": "A TypeScript-based content-based recommender with multilingual support (Japanese & English). Forked from content-based-recommender.",
-  "type": "commonjs",
+  "type": "module",
   "homepage": "https://github.com/kensakurai/ts-content-based-recommender",
   "repository": {
     "type": "git",
@@ -25,9 +25,10 @@
     "lint": "npx tsc --noEmit && eslint 'src/**/*.ts' 'test/**/*.ts'",
     "lint:fix": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
     "tsc": "tsc --noEmit",
-    "test": "./node_modules/.bin/mocha --require ts-node/register 'test/**/*.ts'",
-    "example": "npx ts-node example/example.ts",
-    "dev": "npx ts-node"
+    "test": "npm run build && mocha dist/test/**/*.js",
+    "test:ts": "cross-env NODE_OPTIONS='--loader=ts-node/esm' mocha test/**/*.ts",
+    "example": "node --loader ts-node/esm example/example.ts",
+    "dev": "node --loader ts-node/esm"
   },
   "keywords": [
     "content-based",
@@ -87,12 +88,19 @@
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
     "chai": "^4.5.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
     "mocha": "^11.7.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "files": true
   },
   "peerDependencies": {
     "typescript": ">=4.5.0"

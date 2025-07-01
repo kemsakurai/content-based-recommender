@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { JapaneseTokenizer } from '../../src/lib/tokenizers/JapaneseTokenizer';
+import { JapaneseTokenizer } from '../../src/lib/tokenizers/JapaneseTokenizer.js';
 
 describe('JapaneseTokenizer', () => {
   let tokenizer: JapaneseTokenizer;
