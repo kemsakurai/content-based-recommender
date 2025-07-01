@@ -1,4 +1,4 @@
-import { Document } from '../src/types';
+import { Document } from '../src/types/index.js';
 
 /**
  * サンプル文書タグデータ

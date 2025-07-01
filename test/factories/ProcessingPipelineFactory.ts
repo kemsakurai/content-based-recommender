@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { ProcessingPipelineFactory } from '../../src/lib/factories/ProcessingPipelineFactory';
-import { EnglishTokenizer } from '../../src/lib/tokenizers/EnglishTokenizer';
-import { JapaneseTokenizer } from '../../src/lib/tokenizers/JapaneseTokenizer';
-import { EnglishTokenFilter } from '../../src/lib/filters/EnglishTokenFilter';
-import { JapaneseTokenFilter } from '../../src/lib/filters/JapaneseTokenFilter';
+import { ProcessingPipelineFactory } from '../../src/lib/factories/ProcessingPipelineFactory.js';
+import { EnglishTokenizer } from '../../src/lib/tokenizers/EnglishTokenizer.js';
+import { JapaneseTokenizer } from '../../src/lib/tokenizers/JapaneseTokenizer.js';
+import { EnglishTokenFilter } from '../../src/lib/filters/EnglishTokenFilter.js';
+import { JapaneseTokenFilter } from '../../src/lib/filters/JapaneseTokenFilter.js';
 
 describe('ProcessingPipelineFactory', () => {
   describe('createPipeline', () => {

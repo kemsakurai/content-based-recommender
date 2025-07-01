@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { EnglishTokenizer } from '../../src/lib/tokenizers/EnglishTokenizer';
+import { EnglishTokenizer } from '../../src/lib/tokenizers/EnglishTokenizer.js';
 
 describe('EnglishTokenizer', () => {
   let tokenizer: EnglishTokenizer;

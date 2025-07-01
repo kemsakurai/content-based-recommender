@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { JapaneseTokenFilter } from '../../src/lib/filters/JapaneseTokenFilter';
-import { DetailedJapaneseToken } from '../../src/types';
+import { JapaneseTokenFilter } from '../../src/lib/filters/JapaneseTokenFilter.js';
+import { DetailedJapaneseToken } from '../../src/types/index.js';
 
 describe('JapaneseTokenFilter', () => {
   let filter: JapaneseTokenFilter;

@@ -7,13 +7,14 @@ import {
   ExportedModel,
   ProcessedDocument,
   ProcessingPipeline,
-} from '../types';
-import { ProcessingPipelineFactory } from './factories/ProcessingPipelineFactory';
-import { JapaneseTokenizer } from './tokenizers/JapaneseTokenizer';
-import { EnglishTokenFilter } from './filters/EnglishTokenFilter';
-import { JapaneseTokenFilter } from './filters/JapaneseTokenFilter';
+} from '../types/index.js';
+import { ProcessingPipelineFactory } from './factories/ProcessingPipelineFactory.js';
+import { JapaneseTokenizer } from './tokenizers/JapaneseTokenizer.js';
+import { EnglishTokenFilter } from './filters/EnglishTokenFilter.js';
+import { JapaneseTokenFilter } from './filters/JapaneseTokenFilter.js';
+import natural from 'natural';
 
-const { TfIdf } = require('natural');
+const { TfIdf } = natural;
 
 /**
  * デフォルト設定オプション
@@ -259,7 +260,7 @@ class ContentBasedRecommender {
       // 日本語の場合、品詞情報を含む詳細トークンを取得してフィルタリング
       const japaneseTokenizer = this.pipeline.tokenizer as JapaneseTokenizer;
       const japaneseFilter = this.pipeline.filter as JapaneseTokenFilter;
-      const detailedTokens = await japaneseTokenizer.getDetailedTokens(string);
+      const detailedTokens = await japaneseTokenizer.getDetailedJapaneseTokens(string);
       return japaneseFilter.filterWithPos(detailedTokens);
     } else if (this.options.language === 'en') {
       // 英語の場合、N-gram対応フィルタリング

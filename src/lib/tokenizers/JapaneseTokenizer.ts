@@ -1,6 +1,6 @@
-import * as kuromoji from 'kuromoji';
+import kuromoji from 'kuromoji';
 import striptags from 'striptags';
-import { ITokenizer } from '../../types';
+import { ITokenizer, DetailedJapaneseToken } from '../../types/index.js';
 
 /**
  * 日本語テキスト用のトークナイザークラス
@@ -88,5 +88,20 @@ export class JapaneseTokenizer implements ITokenizer {
 
     // 形態素解析を実行
     return this.kuromojiTokenizer.tokenize(cleanText);
+  }
+
+  /**
+   * 詳細な形態素解析結果を取得する（DetailedJapaneseToken形式）
+   * @param text 解析対象のテキスト
+   * @returns DetailedJapaneseToken形式の解析結果のPromise
+   */
+  public async getDetailedJapaneseTokens(text: string): Promise<DetailedJapaneseToken[]> {
+    const kuromojiTokens = await this.getDetailedTokens(text);
+
+    return kuromojiTokens.map((token) => ({
+      pos: token.pos,
+      surface_form: token.surface_form,
+      basic_form: token.basic_form,
+    }));
   }
 }

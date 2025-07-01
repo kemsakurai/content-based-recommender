@@ -1,4 +1,4 @@
-import { IJapaneseTokenFilter, TokenFilterOptions, DetailedJapaneseToken } from '../../types';
+import { IJapaneseTokenFilter, TokenFilterOptions, DetailedJapaneseToken } from '../../types/index.js';
 
 /**
  * 日本語専用トークンフィルタークラス
